@@ -1,0 +1,17 @@
+{
+  "name": "nooxmeter",
+  "productName": "NooXMeteer",
+  "version": "1.0.0",
+  "description": "Tüm hoparlör ve kulaklıklara aynı anda ses gönder",
+  "main": "main.js",
+  "author": "NooX",
+  "scripts": { "start": "electron .", "dist": "electron-builder --win nsis" },
+  "devDependencies": { "electron": "^33.2.0", "electron-builder": "^25.1.8" },
+  "build": {
+    "appId": "com.noox.nooxmeter",
+    "productName": "NooXMeteer",
+    "files": ["main.js", "index.html", "renderer.js", "style.css", "icon.ico", "icon.png"],
+    "win": { "target": "nsis", "icon": "icon.ico" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true }
+  }
+}
