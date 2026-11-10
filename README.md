@@ -137,4 +137,4 @@ MIT. See the `LICENSE` file, or replace this section with the license of your ch
 
 ---
 
-<p align="center">Made with ♥ by <b>NooX</b></p>
+<p align="center">Developed by <b>NooXRii</b></p>
