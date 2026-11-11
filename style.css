@@ -1,5 +1,12 @@
 *{box-sizing:border-box;margin:0}
+html{color-scheme:dark}
 body{font-family:'Segoe UI',sans-serif;background:#0b0d12;color:#e6e8ef;user-select:none;overflow-x:hidden}
+/* Tema ile uyumlu kaydırma çubuğu */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#0b0d12}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#22d3ee,#a78bfa);border-radius:8px;border:2px solid #0b0d12}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#67e8f9,#c4b5fd)}
+::-webkit-scrollbar-corner{background:#0b0d12}
 header{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid #1b1f2a}
 h1{font-size:20px;font-weight:600}h1 span{background:linear-gradient(90deg,#22d3ee,#a78bfa);-webkit-background-clip:text;color:transparent}
 main{padding:18px 20px 24px}

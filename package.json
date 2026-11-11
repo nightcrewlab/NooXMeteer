@@ -1,7 +1,7 @@
 {
   "name": "nooxmeter",
   "productName": "NooXMeteer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tüm hoparlör ve kulaklıklara aynı anda ses gönder",
   "main": "main.js",
   "author": "NooXRii",
