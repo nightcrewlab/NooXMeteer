@@ -3,18 +3,41 @@
 <link rel="stylesheet" href="style.css"></head>
 <body>
 <header>
-  <svg width="34" height="34" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><circle cx="14" cy="32" r="5" fill="url(#g)"/><g fill="none" stroke="url(#g)" stroke-width="5" stroke-linecap="round"><path d="M26 20a17 17 0 0 1 0 24"/><path d="M36 12a29 29 0 0 1 0 40"/><path d="M46 5a40 40 0 0 1 0 54"/></g></svg>
-  <h1>NooX<span>Meteer</span> <small>v1.3</small></h1>
+  <svg class="logo" width="38" height="38" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg" gradientUnits="userSpaceOnUse" x1="6" y1="8" x2="58" y2="60"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><g fill="none" stroke="url(#lg)" stroke-linecap="round"><path stroke-width="2.75" d="M15.62 45.47L10.70 48.91M13.13 40.63L7.47 42.63M12.04 35.31L6.06 35.70M12.43 29.88L6.56 28.65M14.26 24.77L8.94 21.99M17.40 20.33L13.02 16.23M21.62 16.90L18.51 11.77M26.61 14.74L25.00 8.96M32.00 14.00L32.00 8.00M37.39 14.74L39.00 8.96M42.38 16.90L45.49 11.77M46.60 20.33L50.98 16.23"/><path class="dm" stroke-width="2.75" d="M49.74 24.77L55.06 21.99M51.57 29.88L57.44 28.65M51.96 35.31L57.94 35.70M50.87 40.63L56.53 42.63M48.38 45.47L53.30 48.91"/><path stroke-width="4.5" d="M18.71 36.34A13.5 13.5 0 1 1 45.29 36.34"/><circle cx="32" cy="34" r="3.9" stroke-width="3.3"/></g></svg>
+  <h1>NooX<span>Meteer</span></h1>
+  <small class="ver">v1.3</small>
 </header>
 <main>
-  <button id="power"><b id="pt">BAŞLAT</b><small id="ps">Ses tüm seçili cihazlara gidecek</small></button>
-  <div id="cap"><small>Yakalanan sistem sesi</small><div class="bar"><i></i></div></div>
+  <button id="power">
+    <span class="orb" aria-hidden="true">
+      <svg viewBox="0 0 220 220">
+        <defs>
+          <linearGradient id="og" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient>
+          <radialGradient id="dg" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="#1d2536"/><stop offset="1" stop-color="#0d1119"/></radialGradient>
+          <linearGradient id="dn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0e7490"/><stop offset="1" stop-color="#6d28d9"/></linearGradient>
+        </defs>
+        <circle class="rp rp1" cx="110" cy="110" r="70" fill="none" stroke="url(#og)"/>
+        <circle class="rp rp2" cx="110" cy="110" r="70" fill="none" stroke="url(#og)"/>
+        <path class="tk" d="M28.08 167.36A100 100 0 1 1 191.92 167.36" pathLength="50" fill="none" stroke-width="11" stroke-dasharray=".3 .7"/>
+        <path class="tkon" d="M28.08 167.36A100 100 0 1 1 191.92 167.36" pathLength="50" fill="none" stroke="url(#og)" stroke-width="11" stroke-dasharray=".3 .7"/>
+        <circle class="disc" cx="110" cy="110" r="66" fill="url(#dg)" stroke-width="2"/>
+        <circle class="disc-on" cx="110" cy="110" r="66" fill="url(#dn)"/>
+        <g class="pw"><path d="M94.57 93.61A24 24 0 1 0 125.43 93.61"/><path d="M110 84V108"/></g>
+      </svg>
+    </span>
+    <b id="pt">BAŞLAT</b>
+    <small id="ps">Ses tüm seçili cihazlara gidecek</small>
+  </button>
+  <div id="cap">
+    <div class="hd"><small>Yakalanan sistem sesi</small><span class="tag"></span></div>
+    <div class="bar"><i></i></div>
+  </div>
   <h2>Çıkış Cihazları <em id="count"></em></h2>
   <div id="devs"></div>
   <h2>Mikrofon</h2>
   <div class="card"><div class="row">
     <select id="mic"></select>
-    <button id="mute" title="Sustur">🎤</button></div>
+    <button id="mute" title="Sustur"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/><path class="sl" d="M4 4l16 16"/></svg></button></div>
     <div id="meter"><i></i></div><small id="mstat">Seviye göstergesi</small></div>
   <p class="hint">İpucu: Windows’taki varsayılan hoparlör zaten çalar; diğerlerini buradan açman yeterli.</p>
 </main>

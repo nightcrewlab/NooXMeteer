@@ -29,6 +29,12 @@ function create() {
     desktopCapturer.getSources({ types: ['screen'] }).then(s => cb({ video: s[0], audio: 'loopback' }));
   });
   session.defaultSession.setPermissionRequestHandler((wc, p, cb) => cb(true));
+  // Yakalama yeniden başlatılırken kullanıcı hareketi isteniyorsa renderer işaret gönderir
+  win.webContents.on('console-message', (...a) => {
+    const msg = typeof a[0]?.message === 'string' ? a[0].message : a[2];
+    if (msg === '__noox_start__')
+      win.webContents.executeJavaScript('window.__nooxStart && window.__nooxStart()', true).catch(() => {});
+  });
   win.loadFile('index.html');
 
   const img = nativeImage.createFromPath(path.join(__dirname, 'icon.png')).resize({ width: 16, height: 16 });

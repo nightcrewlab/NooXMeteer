@@ -8,13 +8,44 @@ const nodes = new Map();
 let micStream = null, micCtx = null, raf = 0;
 const skip = ['default', 'communications'];
 
+// Yeni takılan cihaza bu süre dolmadan ses gönderme (ms). Windows varsayılanı
+// değiştirene kadar beklenir; aksi halde yakalanan ses kendi çıkışımızdan
+// tekrar yakalanıp geri besleme (didididi) yapar.
+const SETTLE = 2500;
+const seen = new Map();            // deviceId -> ilk görülme zamanı
+let sig = '', firstRun = true;
+let lastDef = null, rsT = 0, restarting = false;
+
 async function refresh() {
   const d = await navigator.mediaDevices.enumerateDevices();
   const def = d.find(x => x.kind === 'audiooutput' && x.deviceId === 'default');
   outs = d.filter(x => x.kind === 'audiooutput' && !skip.includes(x.deviceId));
   mics = d.filter(x => x.kind === 'audioinput' && !skip.includes(x.deviceId));
-  defId = (outs.find(x => def && x.groupId === def.groupId) || outs[0] || {}).deviceId;
-  render();
+
+  // Varsayılan cihazı önce groupId, sonra etiketle eşle. Bulunamazsa tahmin
+  // yürütme (null): yanlış cihazı varsayılan sanıp gerçek varsayılana ses basmayalım.
+  let hit = def && outs.find(x => x.groupId && x.groupId === def.groupId);
+  if (def && !hit) {
+    const nm = (def.label || '').replace(/^[^-]*\s-\s/, '');
+    hit = outs.find(x => x.label === nm);
+  }
+  defId = hit ? hit.deviceId : (def ? null : ((outs[0] || {}).deviceId ?? null));
+
+  // Varsayılan cihaz çalışırken değişirse Windows'un ses yakalaması bozuluyor
+  // (diğer cihazlara cik cik / civciv diye gidiyor). Yakalamayı baştan başlat.
+  if (defId) {
+    if (running && lastDef && defId !== lastDef) onDefaultChanged();
+    lastDef = defId;
+  }
+
+  const now = Date.now(), ids = new Set(outs.map(o => o.deviceId));
+  for (const o of outs) if (!seen.has(o.deviceId)) seen.set(o.deviceId, firstRun ? 0 : now);
+  for (const id of [...seen.keys()]) if (!ids.has(id)) seen.delete(id);
+  firstRun = false;
+
+  // Sadece liste ya da varsayılan değiştiyse yeniden çiz (kaydırıcı/seçim bozulmasın)
+  const s = JSON.stringify([defId, outs.map(o => [o.deviceId, o.label]), mics.map(m => [m.deviceId, m.label])]);
+  if (s !== sig) { sig = s; render(); }
   if (running) sync();
 }
 
@@ -52,8 +83,10 @@ function removeNode(id) {
 function sync() {
   for (const id of [...nodes.keys()])
     if (!sel.has(id) || id === defId || !outs.some(o => o.deviceId === id)) removeNode(id);
+  const now = Date.now();
   for (const id of sel)
-    if (id !== defId && !nodes.has(id) && outs.some(o => o.deviceId === id)) addNode(id);
+    if (!restarting && defId && id !== defId && !nodes.has(id) && outs.some(o => o.deviceId === id)
+        && now - (seen.get(id) ?? 0) >= SETTLE) addNode(id);
   ui();
 }
 
@@ -61,7 +94,7 @@ function ui() {
   $('#power').classList.toggle('run', running);
   $('#pt').textContent = running ? 'DURDUR' : 'BAŞLAT';
   if (!$('#ps').textContent.startsWith('Cihaz') && !$('#ps').textContent.startsWith('Ses yak'))
-    $('#ps').textContent = running ? `${nodes.size} ek cihaza ses gidiyor` : 'Ses tüm seçili cihazlara gidecek';
+    $('#ps').textContent = running ? (defId ? `${nodes.size} ek cihaza ses gidiyor` : 'Varsayılan cihaz algılanıyor…') : 'Ses tüm seçili cihazlara gidecek';
   $('#count').textContent = `(${sel.size + 1} seçili)`;
 }
 
@@ -92,6 +125,23 @@ async function toggle() {
   }
   ui();
 }
+
+function onDefaultChanged() {
+  restarting = true;
+  [...nodes.keys()].forEach(removeNode);            // bozuk sesi hemen kes
+  $('#ps').textContent = 'Ses yakalama yenileniyor…';
+  clearTimeout(rsT); rsT = setTimeout(restartCapture, 1200); // Windows'un oturmasını bekle
+}
+async function restartCapture() {
+  try {
+    if (!running) return;                           // bu arada kullanıcı durdurduysa dokunma
+    await toggle();                                 // durdur
+    await new Promise(r => setTimeout(r, 300));
+    await toggle();                                 // yeni varsayılanı yakalayarak başlat
+    if (!running) console.log('__noox_start__');    // kullanıcı hareketi gerekirse main.js devralır
+  } finally { restarting = false; }
+}
+window.__nooxStart = async () => { if (!running) await toggle(); };
 
 async function beep(id) {
   try {
@@ -141,3 +191,5 @@ $('#mute').onclick = () => {
 };
 navigator.mediaDevices.addEventListener('devicechange', refresh);
 (async () => { await startMic(); await refresh(); ui(); })();
+// Windows varsayılanı değiştirdiğinde her zaman devicechange tetiklenmez; kısa aralıkla kontrol et
+setInterval(() => refresh().catch(() => {}), 800);
